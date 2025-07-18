@@ -1,5 +1,12 @@
 import requests
 from bs4 import BeautifulSoup
+import json
+
+wr_dict = {}
+
+def write_wr_json():
+    with open("world_records.json", "w") as outfile:
+        json.dump(wr_dict, outfile)
 
 def scrape_world_record_times():
     url = "https://mkwrs.com/mkworld/"
@@ -8,34 +15,29 @@ def scrape_world_record_times():
         response.raise_for_status()
     except Exception as e:
         print("Failed to fetch world records:", e)
-        return ["N/A"] * 30  # fallback empty values
     
     soup = BeautifulSoup(response.text, "html.parser")
 
-    # Based on inspecting the page, records seem to be inside a table or list.
-    # We need to find the correct elements containing the times.
-    # (You might want to inspect the page source for exact selectors.)
-
-    # For example, assume times are in table rows with class 'worldrecord' or similar.
-    # Here is a generic approach, you must adjust selectors after inspecting site.
-
-    times = []
     try:
-        # This is just a placeholder selector — adjust as needed:
-        rows = soup.select("table tbody tr")  # Select all rows in main table
-        for row in rows[:30]:  # get first 30 rows or whatever you need
-            # Suppose time is in 3rd <td> (adjust based on actual site)
-            tds = row.find_all("td")
-            if len(tds) >= 3:
-                time_text = tds[2].get_text(strip=True)
-                times.append(time_text)
-            else:
-                times.append("N/A")
+        wr_table = soup.find("table", class_="wr")  # Select main table containing wr info
+        rows = wr_table.find_all("tr")
+        rows = rows[1:len(rows) - 1] # Cut out first row of headers and last row of total times
+        for row in rows:
+            cells = row.find_all("td")
+            track_name = cells[0].text # First column is names of tracks
+            time = cells[1].text # Second column is world record times
+            character = cells[6].text # Seventh column is character used
+            vehicle = cells[7].text # Eighth column is vehicle used
+            info_dict = {"time": time, "character": character, "vehicle": vehicle}
+            wr_dict[track_name] = info_dict
+
     except Exception as e:
         print("Error parsing times:", e)
-        return ["N/A"] * 30
 
-    # If fewer than 30 found, pad:
-    while len(times) < 30:
-        times.append("N/A")
-    return times[:30]
+
+def main():
+    scrape_world_record_times()
+    write_wr_json()
+
+if __name__ == "__main__":
+    main()

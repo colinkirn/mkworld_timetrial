@@ -12,7 +12,7 @@ def fetch_world_records():
     url = "https://mkwrs.com/mkworld/"
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
-    table = soup.find("table")
+    table = soup.find("table", class_="wr")
 
     records = []
     for row in table.find_all("tr")[1:]:  # skip header
