@@ -1,29 +1,54 @@
 from flask import Flask, render_template_string, request, redirect, url_for
 import pandas as pd
 import os
-import requests
-from bs4 import BeautifulSoup
+import json
+from enum import IntEnum
+
+class Courses(IntEnum):
+    Mario_Bros_Circuit = 1
+    Crown_City = 2
+    Whistlestop_Summit = 3
+    DK_Spaceport = 4
+    Desert_Hills = 5
+    Shy_Guy_Bazaar = 6
+    Wario_Stadium = 7
+    Airship_Fortress = 8
+    DK_Pass = 9
+    Starview_Peak = 10
+    Sky_High_Sundae = 11
+    Wario_Shipyard = 12
+    Koopa_Troopa_Beach = 13
+    Faraway_Oasis = 14
+    Peach_Stadium = 15
+    Peach_Beach = 16
+    Salty_Salty_Speedway = 17
+    Dino_Dino_Jungle = 18
+    Great_Block_Ruins = 19
+    Cheep_Cheep_Falls = 20
+    Dandelion_Depths = 21
+    Boo_Cinema = 22
+    Dry_Bones_Burnout = 23
+    Moo_Moo_Meadows = 24
+    Choco_Mountain = 25
+    Toads_Factory = 26
+    Bowsers_Castle = 27
+    Acorn_Heights = 28
+    Mario_Circuit = 29
+    Rainbow_Road = 30
+
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/courseImages'
 
-# Helper: fetch world records from mkwrs.com
+# Helper: fetch world records from json
 def fetch_world_records():
-    url = "https://mkwrs.com/mkworld/"
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
-    table = soup.find("table", class_="wr")
+    with open("world_records.json", "r") as infile:
+        world_records = json.load(infile)
 
-    records = []
-    for row in table.find_all("tr")[1:]:  # skip header
-        cells = row.find_all("td")
-        if len(cells) >= 5:
-            wr_time = cells[4].text.strip()
-            records.append(wr_time)
-        if len(records) == 30:
-            break
-        print(cells)
-    return records
+    wr_times = []
+    for course in world_records:
+        wr_times.append(world_records[course]["time"])
+    return wr_times
 
 # Route: input screen
 @app.route("/input", methods=["GET", "POST"])
@@ -40,7 +65,7 @@ def input_screen():
         df = update_differences(df)
 
         df.to_csv("numbers.csv", index=False)
-        return redirect(url_for("display"))
+        return redirect(url_for("home"))
 
     df = pd.read_csv("numbers.csv")
     return render_template_string("""
@@ -52,7 +77,7 @@ def input_screen():
             {% endfor %}
             <input type="submit" value="Update">
         </form>
-        <a href="{{ url_for('display') }}">Back to display</a>
+        <a href="{{ url_for('home') }}">Back to home</a>
     """, df=df)
 
 # Helper: convert time string to ms
@@ -83,19 +108,19 @@ def update_differences(df):
     df['difference'] = df['difference_ms'].apply(format_time)
 
     total_row = {
+        'cam': format_time(df['cam_ms'].sum()),
         'colin': format_time(df['colin_ms'].sum()),
-        'difference': format_time(df['difference_ms'].sum()),
-        'cam': format_time(df['cam_ms'].sum())
+        'difference': format_time(df['difference_ms'].sum())
     }
 
     df.drop(['colin_ms', 'cam_ms', 'difference_ms'], axis=1, inplace=True)
-    df = df[['colin', 'difference', 'cam']]
+    df = df[['cam', 'colin', 'difference']]
     df = pd.concat([df, pd.DataFrame([total_row])], ignore_index=True)
     return df
 
 # Route: main display
-@app.route("/display")
-def display():
+@app.route("/")
+def home():
     df = pd.read_csv("numbers.csv")
 
     # Separate total row if exists
@@ -105,60 +130,51 @@ def display():
     else:
         total_row = None
 
-    numbers_a = df['colin'].tolist()
-    numbers_b = df['difference'].tolist()
-    numbers_c = df['cam'].tolist()
-
-    try:
-        numbers_d = fetch_world_records()
-    except:
-        numbers_d = ["N/A"] * len(numbers_a)
+    cam_times = df['cam'].tolist()
+    colin_times = df['colin'].tolist()
+    time_difference = df['difference'].tolist()
+    wr_times = fetch_world_records()
 
     image_dir = "static/courseImages"
-    image_files = sorted([f for f in os.listdir(image_dir) if f.endswith(".png")])
 
     rows = []
-    for i in range(min(len(numbers_a), len(image_files), len(numbers_d))):
+    for course in Courses:
+        i = course.value - 1
         rows.append({
-            'a': numbers_a[i],
-            'b': numbers_b[i],
-            'c': numbers_c[i],
-            'image': f"/{image_dir}/{image_files[i]}",
-            'd': numbers_d[i]
+            'image': f"/{image_dir}/{course.name}.png",
+            'cam': cam_times[i],
+            'colin': colin_times[i],
+            'difference': time_difference[i],
+            'world_record': wr_times[i]
         })
 
     # Add total row at bottom
     if total_row is not None:
         rows.append({
-            'a': total_row['colin'],
-            'b': total_row['difference'],
-            'c': total_row['cam'],
             'image': '',
-            'd': 'Total'
+            'cam': total_row['cam'],
+            'colin': total_row['colin'],
+            'difference': total_row['difference'],
+            'image': '',
+            'world_record': total_row['wr']
         })
-
     return render_template_string("""
         <h1>Mario Kart Times</h1>
         <table border="1" cellspacing="0" cellpadding="5">
-            <tr><th>Colin</th><th>Diff</th><th>Cam</th><th>Image</th><th>WR</th></tr>
+            <tr><th>Course</th><th>Cam</th><th>Colin</th><th>Difference</th><th>World Record</th></tr>
             {% for row in rows %}
                 <tr>
-                    <td>{{ row.a }}</td>
-                    <td>{{ row.b }}</td>
-                    <td>{{ row.c }}</td>
                     <td>{% if row.image %}<img src="{{ row.image }}" height="50">{% endif %}</td>
-                    <td>{{ row.d }}</td>
+                    <td>{{ row.cam }}</td>
+                    <td>{{ row.colin }}</td>
+                    <td>{{ row.difference }}</td>
+                    <td>{{ row.world_record }}</td>
                 </tr>
             {% endfor %}
         </table>
         <br>
         <a href="{{ url_for('input_screen') }}">Edit Times</a>
     """, rows=rows)
-
-# Redirect root to /display
-@app.route("/")
-def home():
-    return redirect("/display")
 
 if __name__ == "__main__":
     app.run(debug=True)
