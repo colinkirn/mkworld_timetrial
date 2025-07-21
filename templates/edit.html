@@ -1,0 +1,13 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    <h2>Edit Colin and Cam Times</h2>
+    <form method="POST">
+        {% for i in range(30) %}
+            <label>Colin {{ i + 1 }}: <input name="colin_{{ i }}" value="{{ df.colin[i] }}"></label>
+            <label>Cam {{ i + 1 }}: <input name="cam_{{ i }}" value="{{ df.cam[i] }}"></label><br>
+        {% endfor %}
+        <input type="submit" value="Update">
+    </form>
+
+{% endblock %}

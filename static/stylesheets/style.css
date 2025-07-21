@@ -1,0 +1,40 @@
+html
+{
+    font-family: 'MarioKartWorld', 'Times New Roman', Times, sans-serif;
+    word-spacing: 0.5em;
+    background-image: url(../images/mario-kart-world-background.jpg);
+	background-size: cover;
+    background-color: rgba(255,255,255,0.7);
+    background-blend-mode: lighten;
+}
+
+html::backdrop
+{
+    opacity: 0.3;
+}
+
+@font-face {
+	font-family: 'MarioKartWorld';;
+	src: url(../fonts/MarioKartWorld.otf);
+}
+
+h1
+{
+    text-align: center;
+    font-size: xx-large;
+}
+
+table, th, td
+{
+    border: 0.15em, solid, black;
+    padding: 1em;
+    border-collapse: collapse;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: larger;
+}
+
+td
+{
+    text-align: center;
+}

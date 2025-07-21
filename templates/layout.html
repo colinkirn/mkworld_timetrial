@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head>
+        <meta charset="utf-8">
+        <meta name="author" content="Cam Kirn">
+        <meta name="author" content="Colin Kirn">
+		<meta name="description" content="Display author's track data for Mario Kart World">
+        <title>{{ title }}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/style.css') }}" type="text/css"/>
+    </head>
+
+    <body>
+        <h1>Mario Kart World Times</h1>
+        {% block content %}{% endblock %}
+    </body>
+    <footer>
+        <a href="{{ url_for(next_screen) }}">
+            {% if next_screen == 'input_screen' %}
+                Edit Times
+            {% else %}
+                Display Times
+            {% endif %}
+        </a>
+    </footer>
+</html>

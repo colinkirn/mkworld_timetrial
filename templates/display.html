@@ -1,0 +1,27 @@
+{% extends "layout.html" %}
+{% block content %}
+
+    <table class="times">
+        <tr>
+            <th>Course</th>
+            <th>Cam</th>
+            <th>Colin</th>
+            <th>Difference</th>
+            <th>World Record</th>
+        </tr>
+        {% for row in rows %}
+            <tr>
+                <td>
+                    {% if row.image %}
+                        <img src="{{ row.image }}" height="120">
+                    {% endif %}
+                </td>
+                <td>{{ row.cam }}</td>
+                <td>{{ row.colin }}</td>
+                <td>{{ row.difference }}</td>
+                <td>{{ row.world_record }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}
