@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<table>
+    <tr>
+        <th>Rank</th>
+        <th>Player</th>
+        <th>Course</th>
+        <th>Percent to wr</th>
+    </tr>
+    {% for entry in top10 %}
+<tr>
+    <td>{{ loop.index }}</td>  <!-- loop.index starts at 1 -->
+    <td>{{ entry.player }}</td>
+    <td>{{ entry.course }}</td>
+    <td>{{ entry.number }}%</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock %}
+
+
+

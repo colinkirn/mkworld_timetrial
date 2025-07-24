@@ -188,5 +188,40 @@ def home():
     
     return render_template("display.html", rows=rows, next_screen="input_screen", calculate_winner=is_p1_winning)
 
+# Route: Best times leaderboard
+@app.route("/leaderboard")
+def leaderboard_screen():
+    cam_times, col_times, dif, wr = return_time_lists();
+    wrMS, colinMS, camMS, colinPct, camPct, = [],[],[],[],[]
+    colinD, camD = {},{}
+    for time in wr:
+        wrMS.append(parse_time(time))
+    for time in col_times:
+        colinMS.append(parse_time(time))
+    for i in range(30):
+        pct = round((wrMS[i] / colinMS[i]) * 100,2)
+        colinPct.append(pct)
+    for time in cam_times:
+        camMS.append(parse_time(time))
+    for i in range(30):
+        pct = round((wrMS[i] / camMS[i]) * 100,2)
+        camPct.append(pct)
+    x = 0
+    for course in Courses:
+        colinD[course] = colinPct[x]
+        x += 1
+    x = 0
+    for course in Courses:
+        camD[course] = camPct[x]
+        x+=1
+    combined = []
+    for course, number in colinD.items():
+        combined.append({"player": "colin", "course": format_course_names(course.name), "number": number})
+    for course, number in camD.items():
+        combined.append({"player": "cam", "course":  format_course_names(course.name), "number": number})
+    sorted_combined = sorted(combined, key=lambda x: x["number"], reverse=True)
+    t10 = sorted_combined[:10]
+    return render_template("leaderboard.html", top10=t10, next_screen="home")
+
 if __name__ == "__main__":
     app.run(debug=True)
