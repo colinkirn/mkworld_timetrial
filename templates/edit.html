@@ -2,10 +2,10 @@
 {% block content %}
 
     <h2>Edit Colin and Cam Times</h2>
-    <form method="POST">
-        {% for i in range(30) %}
-            <label>Colin {{ i + 1 }}: <input name="colin_{{ i }}" value="{{ df.colin[i] }}"></label>
-            <label>Cam {{ i + 1 }}: <input name="cam_{{ i }}" value="{{ df.cam[i] }}"></label><br>
+    <form method="POST" class="grid-layout">
+        {% for course in courses %}
+            <label class="form">Cam {{ format_course_names(course.name) }}: <input class="data" name="cam_{{ course.name }}" value="{{ cam_times[course.value-1] }}"></label>
+            <label class="form">Colin {{ format_course_names(course.name) }}: <input class="data" name="colin_{{ course.name }}" value="{{ colin_times[course.value-1] }}"></label>
         {% endfor %}
         <input type="submit" value="Update">
     </form>

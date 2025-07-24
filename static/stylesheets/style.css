@@ -38,3 +38,37 @@ td
 {
     text-align: center;
 }
+
+td.winning
+{
+    background: rgba(0, 255, 0, 0.7);
+}
+
+td.losing
+{
+    background: rgba(255, 0, 0, 0.7);
+}
+
+td.tied
+{
+    background: rgba(255, 255, 0, 0.7);
+}
+
+.grid-layout
+{
+    display: grid;
+    grid-template-columns: auto auto;
+    width: 60%;
+}
+
+label.form
+{
+    display: grid;
+    grid-template-columns: auto auto;
+    text-align: justify;
+    margin-left: 1em;
+}
+
+input[type="submit"] {
+  width: fit-content;
+}

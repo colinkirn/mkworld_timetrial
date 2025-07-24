@@ -1,3 +1,8 @@
+"""
+Author: Cam Kirn
+Assign each track a number to display in the proper order
+"""
+
 from enum import IntEnum
 
 class Courses(IntEnum):
@@ -31,3 +36,22 @@ class Courses(IntEnum):
     Acorn_Heights = 28
     Mario_Circuit = 29
     Rainbow_Road = 30
+
+def format_course_names(course_var: str) -> str:
+    """
+    Author: Cam Kirn
+    Convert enum member's name to proper formatting for user
+    """
+    if course_var == "Mario_Bros_Circuit":
+        course_name = "Mario Bros. Circuit"
+    elif course_var == "Sky_High_Sundae":
+        course_name = "Sky-High Sundae"
+    elif course_var == "Great_Block_Ruins":
+        course_name = "Great ? Block Ruins"
+    elif course_var == "Toads_Factory":
+        course_name = "Toad's Factory"
+    elif course_var == "Bowsers_Castle":
+        course_name = "Bowser's Castle"
+    else:
+        course_name = course_var.replace('_', ' ')
+    return course_name

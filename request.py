@@ -1,14 +1,27 @@
+"""
+Authors: Cam Kirn, Colin Kirn
+Scrape all world record data for Mario Kart World from mkwrs.com and write to json
+"""
+
 import requests
 from bs4 import BeautifulSoup
 import json
 
 wr_dict = {}
 
-def write_wr_json():
+def write_wr_json() -> None:
+    """
+    Author: Cam Kirn
+    Write world record data to json
+    """
     with open("world_records.json", "w") as outfile:
         json.dump(wr_dict, outfile)
 
-def scrape_world_record_times():
+def scrape_world_record_times() -> None:
+    """
+    Authors: Cam Kirn, Colin Kirn
+
+    """
     url = "https://mkwrs.com/mkworld/"
     try:
         response = requests.get(url)
@@ -19,7 +32,7 @@ def scrape_world_record_times():
     soup = BeautifulSoup(response.text, "html.parser")
 
     try:
-        wr_table = soup.find("table", class_="wr")  # Select main table containing wr info
+        wr_table = soup.find("table", class_="wr")
         rows = wr_table.find_all("tr")
         rows = rows[1:len(rows) - 1] # Cut out first row of headers and last row of total times
         for row in rows:
@@ -34,10 +47,6 @@ def scrape_world_record_times():
     except Exception as e:
         print("Error parsing times:", e)
 
-
-def main():
+if __name__ == "__main__":
     scrape_world_record_times()
     write_wr_json()
-
-if __name__ == "__main__":
-    main()
