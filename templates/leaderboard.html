@@ -6,14 +6,14 @@
         <th>Rank</th>
         <th>Player</th>
         <th>Course</th>
-        <th>Percent to wr</th>
+        <th>Percent off World Record</th>
     </tr>
     {% for entry in top10 %}
 <tr>
     <td>{{ loop.index }}</td>  <!-- loop.index starts at 1 -->
     <td>{{ entry.player }}</td>
     <td>{{ entry.course }}</td>
-    <td>{{ entry.number }}%</td>
+    <td>{{ entry.percentage }}%</td>
 </tr>
 {% endfor %}
 </table>

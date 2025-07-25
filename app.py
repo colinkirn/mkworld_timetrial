@@ -144,7 +144,7 @@ def input_screen():
         update_cc_json(cam_times, colin_times)
 
         return redirect(url_for("home"))
-    return render_template("edit.html", cam_times=cam_times, colin_times=colin_times, next_screen="home", courses=Courses, format_course_names=format_course_names)
+    return render_template("edit.html", cam_times=cam_times, colin_times=colin_times, courses=Courses, format_course_names=format_course_names)
 
 @app.route("/")
 def home():
@@ -186,42 +186,31 @@ def home():
         })
     '''
     
-    return render_template("display.html", rows=rows, next_screen="input_screen", calculate_winner=is_p1_winning)
+    return render_template("display.html", rows=rows, calculate_winner=is_p1_winning)
 
 # Route: Best times leaderboard
 @app.route("/leaderboard")
 def leaderboard_screen():
-    cam_times, col_times, dif, wr = return_time_lists();
-    wrMS, colinMS, camMS, colinPct, camPct, = [],[],[],[],[]
-    colinD, camD = {},{}
-    for time in wr:
-        wrMS.append(parse_time(time))
-    for time in col_times:
-        colinMS.append(parse_time(time))
-    for i in range(30):
-        pct = round((wrMS[i] / colinMS[i]) * 100,2)
-        colinPct.append(pct)
-    for time in cam_times:
-        camMS.append(parse_time(time))
-    for i in range(30):
-        pct = round((wrMS[i] / camMS[i]) * 100,2)
-        camPct.append(pct)
-    x = 0
+    cam_times, colin_times, time_difference, wr_times = return_time_lists()
+    cam_dict, colin_dict = {},{}
+
     for course in Courses:
-        colinD[course] = colinPct[x]
-        x += 1
-    x = 0
-    for course in Courses:
-        camD[course] = camPct[x]
-        x+=1
+        cam_ms = parse_time(cam_times[course.value - 1])
+        colin_ms = parse_time(colin_times[course.value - 1])
+        wr_ms = parse_time(wr_times[course.value - 1])
+        cam_pct = round((wr_ms / cam_ms) * 100, 2)
+        cam_dict[course.name] = cam_pct
+        colin_pct = round((wr_ms / colin_ms) * 100, 2)
+        colin_dict[course.name] = colin_pct
+
     combined = []
-    for course, number in colinD.items():
-        combined.append({"player": "colin", "course": format_course_names(course.name), "number": number})
-    for course, number in camD.items():
-        combined.append({"player": "cam", "course":  format_course_names(course.name), "number": number})
-    sorted_combined = sorted(combined, key=lambda x: x["number"], reverse=True)
+    for course, number in cam_dict.items():
+        combined.append({"player": "Cam", "course":  format_course_names(course), "percentage": number})
+    for course, number in colin_dict.items():
+        combined.append({"player": "Colin", "course": format_course_names(course), "percentage": number})
+    sorted_combined = sorted(combined, key=lambda x: x['percentage'], reverse=True)
     t10 = sorted_combined[:10]
-    return render_template("leaderboard.html", top10=t10, next_screen="home")
+    return render_template("leaderboard.html", top10=t10)
 
 if __name__ == "__main__":
     app.run(debug=True)

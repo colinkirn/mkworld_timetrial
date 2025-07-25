@@ -13,15 +13,47 @@ html::backdrop
     opacity: 0.3;
 }
 
-@font-face {
+@font-face 
+{
 	font-family: 'MarioKartWorld';;
 	src: url(../fonts/MarioKartWorld.otf);
+}
+
+nav{
+  text-align: center;
+  padding-top: 1.5%;
+  padding-bottom: 1.5%;
+}
+
+nav a
+{
+    text-decoration: none;
+    padding: 2.5% 5% 2.5% 5%;
+    margin: 1.4%;
+    display: inline-block;
+    border-style: solid;
+    color: black;
+    font-size: large;
+}
+
+nav a:hover
+{
+    background-color: black;
+    color: white;
+    border-color: black;
+}
+
+nav a.active
+{
+    text-decoration: underline;
+    text-decoration-thickness: 0.15em;
 }
 
 h1
 {
     text-align: center;
     font-size: xx-large;
+    font-weight: 100;
 }
 
 table, th, td
@@ -32,6 +64,11 @@ table, th, td
     margin-left: auto;
     margin-right: auto;
     font-size: larger;
+}
+
+th
+{
+    font-weight: 100;
 }
 
 td

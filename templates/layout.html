@@ -10,17 +10,14 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='stylesheets/style.css') }}" type="text/css"/>
     </head>
 
-    <body>
-        <h1>Mario Kart World Times</h1>
+    <body onload="styleActivePage()">
+        <h1>Mario Kart World Records</h1>
+        <nav>
+            <a href="/">Display Times</a>
+            <a href="/input">Edit Times</a>
+            <a href="/leaderboard">Leaderboard</a>
+        </nav>
+        <script src="{{ url_for('static', filename='scripts/script.js') }}"></script>
         {% block content %}{% endblock %}
     </body>
-    <footer>
-        <a href="{{ url_for(next_screen) }}">
-            {% if next_screen == 'input_screen' %}
-                Edit Times
-            {% else %}
-                Display Times
-            {% endif %}
-        </a>
-    </footer>
 </html>
