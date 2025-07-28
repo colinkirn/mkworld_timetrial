@@ -74,23 +74,42 @@ def read_cc_json() -> dict[str, dict[str, dict[str, str]]]:
         cc_records = json.load(infile)
     return cc_records
 
-def return_time_lists() -> tuple[list[str], list[str], list[str], list[str]]:
+def return_cc_time_lists() -> tuple[list[str], list[str], list[str]]:
     """
     Author: Cam Kirn
-    Return 4 lists of Cam's records, Colin's records, the difference between them, and world records
+    Return 3 lists of Cam's records, Colin's records, and the difference between them
     """
     cc_records = read_cc_json()
-    world_records = read_world_records()
     cam_times = []
     colin_times = []
     time_difference = []
+    for course in Courses:
+        course_key = format_course_names(course.name)
+        cam_times.append(cc_records[course_key]['Cam']['time'])
+        colin_times.append(cc_records[course_key]['Colin']['time'])
+        time_difference.append(cc_records[course_key]['Difference'])
+    return cam_times, colin_times, time_difference
+
+def return_wr_time_list() -> list[str]:
+    """
+    Author: Cam Kirn
+    Return a list of world record times
+    """
+    world_records = read_world_records()
     wr_times = []
-    for course in cc_records:
-        cam_times.append(cc_records[course]['Cam']['time'])
-        colin_times.append(cc_records[course]['Colin']['time'])
-        time_difference.append(cc_records[course]['Difference'])
-        wr_times.append(world_records[course]['time'])
-    return cam_times, colin_times, time_difference, wr_times
+    for course in Courses:
+        course_key = format_course_names(course.name)
+        wr_times.append(world_records[course_key]['time'])
+    return wr_times
+
+def return_wr_total() -> str:
+    """
+    Author: Cam Kirn
+    Return a string of world record times added together
+    """
+    world_records = read_world_records()
+    wr_total = world_records['total']['time']
+    return wr_total
 
 def parse_time(time: str) -> int:
     """
@@ -131,7 +150,7 @@ def is_p1_winning(p1_time: str, p2_time: str) -> str:
 
 @app.route("/input", methods=["GET", "POST"])
 def input_screen():
-    cam_times, colin_times, time_difference, wr_times = return_time_lists()
+    cam_times, colin_times, time_difference = return_cc_time_lists()
 
     if request.method == "POST":
         new_data = request.form
@@ -148,20 +167,14 @@ def input_screen():
 
 @app.route("/")
 def home():
-    #TODO: Implement total row of summed times
-
-    # Separate total row if exists
-    '''
-    if 'Total' in df['colin'].values:
-        total_row = df[df['colin'] == 'Total'].iloc[0]
-        df = df[df['colin'] != 'Total'].reset_index(drop=True)
-    else:
-        total_row = None
-    '''
-
-    cam_times, colin_times, time_difference, wr_times = return_time_lists()
+    cam_times, colin_times, time_difference = return_cc_time_lists()
+    wr_times = return_wr_time_list()
 
     image_dir = "static/courseImages"
+
+    cam_total_ms = 0
+    colin_total_ms = 0
+    difference_total_ms = 0
 
     rows = []
     for course in Courses:
@@ -173,25 +186,27 @@ def home():
             "difference": time_difference[i],
             "world_record": wr_times[i]
         })
+        cam_total_ms = cam_total_ms + parse_time(cam_times[i])
+        colin_total_ms = colin_total_ms + parse_time(colin_times[i])
+    difference_total_ms = abs(cam_total_ms - colin_total_ms)
+    cam_total = format_time(cam_total_ms)
+    colin_total = format_time(colin_total_ms)
+    difference_total = format_time(difference_total_ms)
+    wr_total = return_wr_total()
 
-    # Add total row at bottom
-    '''
-    if total_row is not None:
-        rows.append({
-            'image': '',
-            'cam': total_row['cam'],
-            'colin': total_row['colin'],
-            'difference': total_row['difference'],
-            'world_record': total_row['wr']
-        })
-    '''
-    
-    return render_template("display.html", rows=rows, calculate_winner=is_p1_winning)
+    return render_template("display.html", 
+                           rows=rows, 
+                           calculate_winner=is_p1_winning, 
+                           cam_total=cam_total, 
+                           colin_total=colin_total, 
+                           difference_total=difference_total,
+                           wr_total=wr_total)
 
 # Route: Best times leaderboard
 @app.route("/leaderboard")
 def leaderboard_screen():
-    cam_times, colin_times, time_difference, wr_times = return_time_lists()
+    cam_times, colin_times, time_difference = return_cc_time_lists()
+    wr_times = return_wr_time_list()
     cam_dict, colin_dict = {},{}
 
     for course in Courses:
