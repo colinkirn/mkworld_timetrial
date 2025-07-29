@@ -225,7 +225,8 @@ def leaderboard_screen():
         combined.append({"player": "Colin", "course": format_course_names(course), "percentage": number})
     sorted_combined = sorted(combined, key=lambda x: x['percentage'], reverse=True)
     t10 = sorted_combined[:10]
-    return render_template("leaderboard.html", top10=t10)
+    b10 = sorted(sorted_combined[-10:], key = lambda x: x['percentage'])
+    return render_template("leaderboard.html", top10=t10, bottom10=b10)
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,7 +1,8 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<table>
+<section style="display: grid; grid-template-columns: auto auto; gap: 50px; justify-content: center;">
+<table style="width: 300px; font-size: 14px; text-align: center;">
     <tr>
         <th>Rank</th>
         <th>Player</th>
@@ -18,6 +19,22 @@
 {% endfor %}
 </table>
 
+<table style="width: 300px; font-size: 14px; text-align: center;">
+    <tr>
+        <th>Rank</th>
+        <th>Player</th>
+        <th>Course</th>
+        <th>Percent off World Record</th>
+    </tr>
+    {% for entry in bottom10 %}
+<tr>
+    <td>{{61 - loop.index }}</td>  <!-- loop.index starts at 1 -->
+    <td>{{ entry.player }}</td>
+    <td>{{ entry.course }}</td>
+    <td>{{ entry.percentage }}%</td>
+</tr>
+{% endfor %}
+</section>
 {% endblock %}
 
 

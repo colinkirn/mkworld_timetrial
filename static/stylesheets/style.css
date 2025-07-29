@@ -2,8 +2,8 @@ html
 {
     font-family: 'MarioKartWorld', 'Times New Roman', Times, sans-serif;
     word-spacing: 0.5em;
-    background-image: url(../images/mario-kart-world-background.jpg);
-	background-size: cover;
+    background-image: url(../images/mklogos.jpg);
+	background-size:contain;
     background-color: rgba(255,255,255,0.7);
     background-blend-mode: lighten;
 }
