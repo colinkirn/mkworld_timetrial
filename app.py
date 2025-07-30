@@ -7,11 +7,20 @@ from flask import Flask, render_template, request, redirect, url_for
 import json
 
 from courses import Courses, format_course_names
+from request import scrape_world_record_times, write_wr_json
 
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = "static/courseImages"
 
+
+def get_world_records() -> None:
+    """
+    Author: Cam Kirn
+    Get updated world records from mkwrs.com, and write them to json
+    """
+    scrape_world_record_times()
+    write_wr_json()
 
 def read_world_records() -> dict[str, dict[str, str]]:
     """
@@ -148,23 +157,6 @@ def is_p1_winning(p1_time: str, p2_time: str) -> str:
     else:
         return "tied"
 
-@app.route("/input", methods=["GET", "POST"])
-def input_screen():
-    cam_times, colin_times, time_difference = return_cc_time_lists()
-
-    if request.method == "POST":
-        new_data = request.form
-        
-        for course in Courses:
-            i = course.value - 1
-            cam_times[i] = new_data.get(f"cam_{course.name}", cam_times[i])
-            colin_times[i] = new_data.get(f"colin_{course.name}", colin_times[i])
-
-        update_cc_json(cam_times, colin_times)
-
-        return redirect(url_for("home"))
-    return render_template("edit.html", cam_times=cam_times, colin_times=colin_times, courses=Courses, format_course_names=format_course_names)
-
 @app.route("/")
 def home():
     cam_times, colin_times, time_difference = return_cc_time_lists()
@@ -196,13 +188,33 @@ def home():
 
     return render_template("display.html", 
                            rows=rows, 
-                           calculate_winner=is_p1_winning, 
+                           calculate_winner=is_p1_winning,
                            cam_total=cam_total, 
                            colin_total=colin_total, 
                            difference_total=difference_total,
                            wr_total=wr_total)
 
-# Route: Best times leaderboard
+@app.route("/input", methods=["GET", "POST"])
+def input_screen():
+    cam_times, colin_times, time_difference = return_cc_time_lists()
+
+    if request.method == "POST":
+        new_data = request.form
+        
+        for course in Courses:
+            i = course.value - 1
+            cam_times[i] = new_data.get(f"cam_{course.name}", cam_times[i])
+            colin_times[i] = new_data.get(f"colin_{course.name}", colin_times[i])
+
+        update_cc_json(cam_times, colin_times)
+
+        return redirect(url_for("home"))
+    return render_template("edit.html",
+                            cam_times=cam_times, 
+                            colin_times=colin_times, 
+                            courses=Courses, 
+                            format_course_names=format_course_names)
+
 @app.route("/leaderboard")
 def leaderboard_screen():
     cam_times, colin_times, time_difference = return_cc_time_lists()
@@ -227,6 +239,11 @@ def leaderboard_screen():
     t10 = sorted_combined[:10]
     b10 = sorted(sorted_combined[-10:], key = lambda x: x['percentage'])
     return render_template("leaderboard.html", top10=t10, bottom10=b10)
+
+@app.route("/update-wrs", methods=["POST"])
+def update_screen():
+    get_world_records()
+    return redirect("/")
 
 if __name__ == "__main__":
     app.run(debug=True)

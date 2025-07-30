@@ -63,7 +63,17 @@ table, th, td
     border-collapse: collapse;
     margin-left: auto;
     margin-right: auto;
-    font-size: larger;
+}
+
+table.times
+{
+    font-size: x-large;
+}
+
+table.leaderboard
+{
+    font-size: medium;
+    width: min-content;
 }
 
 th
@@ -95,11 +105,23 @@ td.tied
 {
     display: grid;
     grid-template-columns: auto auto;
-    width: 60%;
+}
+
+form
+{
+    text-align: center;
+    margin-top: 2em;
+}
+
+section
+{
+    justify-content: center;
+    column-gap: 5em;
 }
 
 label.form
 {
+    width: 60%;
     display: grid;
     grid-template-columns: auto auto;
     text-align: justify;
@@ -108,4 +130,16 @@ label.form
 
 input[type="submit"] {
   width: fit-content;
+}
+
+button
+{
+    border: 0.15em, solid, black;
+    padding: 1em;
+    background: transparent;
+}
+
+button:hover
+{
+    background: rgba(255, 255, 255, 0.8)
 }

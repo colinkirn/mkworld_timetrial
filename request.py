@@ -47,7 +47,3 @@ def scrape_world_record_times() -> None:
         wr_dict['total'] = {"time": total_row.find_all("td")[1].text}
     except Exception as e:
         print("Error parsing times:", e)
-
-if __name__ == "__main__":
-    scrape_world_record_times()
-    write_wr_json()

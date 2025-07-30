@@ -16,19 +16,23 @@
                         <img src="{{ row.image }}" height="120">
                     {% endif %}
                 </td>
-                <td class={{ calculate_winner(row.cam, row.colin) }}>{{ row.cam }}</td>
-                <td class={{ calculate_winner(row.colin, row.cam) }}>{{ row.colin }}</td>
+                <td class="{{ calculate_winner(row.cam, row.colin) }}">{{ row.cam }}</td>
+                <td class="{{ calculate_winner(row.colin, row.cam) }}">{{ row.colin }}</td>
                 <td>{{ row.difference }}</td>
                 <td>{{ row.world_record }}</td>
             </tr>
         {% endfor %}
         <tr>
             <td>Total</td>
-            <td>{{ cam_total }}</td>
-            <td> {{ colin_total }} </td>
+            <td class="{{ calculate_winner(cam_total, colin_total) }}">{{ cam_total }}</td>
+            <td class="{{ calculate_winner(colin_total, cam_total) }}">{{ colin_total }}</td>
             <td>{{ difference_total }}</td>
             <td>{{ wr_total }}</td>
         </tr>
     </table>
+
+    <form action="/update-wrs" method="POST">
+            <button type="submit">Update World Records</button>
+    </form>
 
 {% endblock %}
