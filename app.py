@@ -218,13 +218,20 @@ def input_screen():
 @app.route("/leaderboard")
 def leaderboard_screen():
     cam_times, colin_times, time_difference = return_cc_time_lists()
+    print(time_difference)
     wr_times = return_wr_time_list()
-    cam_dict, colin_dict = {},{}
+    cam_dict, colin_dict, dif_dict = {},{},{}
 
     for course in Courses:
         cam_ms = parse_time(cam_times[course.value - 1])
         colin_ms = parse_time(colin_times[course.value - 1])
         wr_ms = parse_time(wr_times[course.value - 1])
+        dif_ms = parse_time(time_difference[course.value - 1])
+        if colin_ms <= cam_ms:
+            difTup = (dif_ms,"Colin")
+        else:
+            difTup = (dif_ms,"Cam")
+        dif_dict[course.name] = difTup
         cam_pct = round((wr_ms / cam_ms) * 100, 2)
         cam_dict[course.name] = cam_pct
         colin_pct = round((wr_ms / colin_ms) * 100, 2)
@@ -237,8 +244,23 @@ def leaderboard_screen():
         combined.append({"player": "Colin", "course": format_course_names(course), "percentage": number})
     sorted_combined = sorted(combined, key=lambda x: x['percentage'], reverse=True)
     t10 = sorted_combined[:10]
-    b10 = sorted(sorted_combined[-10:], key = lambda x: x['percentage'])
-    return render_template("leaderboard.html", top10=t10, bottom10=b10)
+    b10 = sorted_combined[-10:]
+
+    sorted_dif = sorted(dif_dict.items(), key=lambda item: item[1][0])
+    s10 = sorted(sorted_dif[:10], key=lambda item: item[1][0], reverse=True)
+    bi10 = sorted(sorted_dif[-10:], key=lambda item: item[1][0], reverse=True)
+
+    s10_data = [
+    {"course": format_course_names(course), "time_diff": format_time(time_diff), "player": name}
+    for course, (time_diff, name) in s10
+    ]
+
+    bi10_data = [
+    {"course": format_course_names(course), "time_diff": format_time(time_diff), "player": name}
+    for course, (time_diff, name) in bi10
+    ]
+
+    return render_template("leaderboard.html", top10=t10, bottom10=b10, small10=s10_data, big10=bi10_data)
 
 @app.route("/update-wrs", methods=["POST"])
 def update_screen():

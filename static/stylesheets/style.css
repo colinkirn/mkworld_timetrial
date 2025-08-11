@@ -74,6 +74,19 @@ table.leaderboard
 {
     font-size: medium;
     width: min-content;
+    background-color: #AEDCC0;
+}
+
+.colin-row {
+  background-color: #7BD389;  
+}
+
+.cam-row {
+  background-color: aquamarine; 
+}
+
+.other-row {
+  background-color: wheat;
 }
 
 th

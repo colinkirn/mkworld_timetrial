@@ -10,8 +10,23 @@
             <th>Percent off World Record</th>
         </tr>
         {% for entry in top10 %}
-            <tr>
+            <tr class="{% if entry.player == 'Colin' %}colin-row{% elif entry.player == 'Cam' %}cam-row{% else %}other-row{% endif %}">
                 <td>{{ loop.index }}</td>  <!-- loop.index starts at 1 -->
+                <td>{{ entry.player }}</td>
+                <td>{{ entry.course }}</td>
+                <td>{{ entry.percentage }}%</td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <th>...</th>
+            <th>...</th>
+            <th>...</th>
+            <th>...</th>
+
+        </tr>
+        {% for entry in bottom10 %}
+            <tr class="{% if entry.player == 'Colin' %}colin-row{% elif entry.player == 'Cam' %}cam-row{% else %}other-row{% endif %}">
+                <td>{{50 + loop.index }}</td>  <!-- loop.index starts at 1 -->
                 <td>{{ entry.player }}</td>
                 <td>{{ entry.course }}</td>
                 <td>{{ entry.percentage }}%</td>
@@ -22,18 +37,34 @@
     <table class="leaderboard">
         <tr>
             <th>Rank</th>
-            <th>Player</th>
+            <th>Current Leader</th>
             <th>Course</th>
-            <th>Percent off World Record</th>
+            <th>Time Difference</th>
         </tr>
-        {% for entry in bottom10 %}
-            <tr>
-                <td>{{61 - loop.index }}</td>  <!-- loop.index starts at 1 -->
+        {% for entry in big10 %}
+            <tr class="{% if entry.player == 'Colin' %}colin-row{% elif entry.player == 'Cam' %}cam-row{% else %}other-row{% endif %}">
+                <td>{{ loop.index }}</td>  <!-- loop.index starts at 1 -->
                 <td>{{ entry.player }}</td>
                 <td>{{ entry.course }}</td>
-                <td>{{ entry.percentage }}%</td>
+                <td>{{ entry.time_diff }}</td>
             </tr>
         {% endfor %}
+        <tr>
+            <th>...</th>
+            <th>...</th>
+            <th>...</th>
+            <th>...</th>
+        </tr>
+        {% for entry in small10 %}
+            <tr class="{% if entry.player == 'Colin' %}colin-row{% elif entry.player == 'Cam' %}cam-row{% else %}other-row{% endif %}">
+                <td>{{50 + loop.index }}</td>  <!-- loop.index starts at 1 -->
+                <td>{{ entry.player }}</td>
+                <td>{{ entry.course }}</td>
+                <td>{{ entry.time_diff }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
 </section>
 {% endblock %}
 
