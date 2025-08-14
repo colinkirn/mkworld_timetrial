@@ -74,19 +74,19 @@ table.leaderboard
 {
     font-size: medium;
     width: min-content;
-    background-color: #AEDCC0;
+    background-color: #43B3A9;
 }
 
 .colin-row {
-  background-color: #7BD389;  
+  background-color: #DD3162;  
 }
 
 .cam-row {
-  background-color: aquamarine; 
+  background-color: #0492C2; 
 }
 
 .other-row {
-  background-color: wheat;
+  background-color: #A68BC6;
 }
 
 th

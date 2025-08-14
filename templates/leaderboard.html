@@ -17,12 +17,11 @@
                 <td>{{ entry.percentage }}%</td>
             </tr>
         {% endfor %}
-        <tr>
-            <th>...</th>
-            <th>...</th>
-            <th>...</th>
-            <th>...</th>
-
+        <tr class="other-row">
+            <td>...</td>
+            <td>...</td>
+            <td>...</td>
+            <td>...</td>
         </tr>
         {% for entry in bottom10 %}
             <tr class="{% if entry.player == 'Colin' %}colin-row{% elif entry.player == 'Cam' %}cam-row{% else %}other-row{% endif %}">
@@ -49,11 +48,11 @@
                 <td>{{ entry.time_diff }}</td>
             </tr>
         {% endfor %}
-        <tr>
-            <th>...</th>
-            <th>...</th>
-            <th>...</th>
-            <th>...</th>
+        <tr class="other-row">
+            <td>...</td>
+            <td>...</td>
+            <td>...</td>
+            <td>...</td>
         </tr>
         {% for entry in small10 %}
             <tr class="{% if entry.player == 'Colin' %}colin-row{% elif entry.player == 'Cam' %}cam-row{% else %}other-row{% endif %}">

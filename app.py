@@ -218,7 +218,6 @@ def input_screen():
 @app.route("/leaderboard")
 def leaderboard_screen():
     cam_times, colin_times, time_difference = return_cc_time_lists()
-    print(time_difference)
     wr_times = return_wr_time_list()
     cam_dict, colin_dict, dif_dict = {},{},{}
 
